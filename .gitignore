@@ -1,0 +1,7 @@
+
+decode/in/*
+decode/out/*
+encode/in/*
+encode/out/*
+
+!*.gitkeep
