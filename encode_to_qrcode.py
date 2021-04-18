@@ -14,6 +14,7 @@ import generate_pdf
 import uuid
 import subprocess
 
+# https://gist.github.com/ethanwhite/ba63849c26301f862e4e
 process = subprocess.Popen(['git', 'rev-parse', 'HEAD'], shell=False, stdout=subprocess.PIPE)
 git_head_hash = process.communicate()[0].strip().decode()[0:7]
 
