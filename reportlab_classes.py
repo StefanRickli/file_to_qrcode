@@ -3,17 +3,20 @@ from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame
 from reportlab.pdfgen.canvas import Canvas
+from assets.test_qrcode_generator import get_test_qrcode
 
 page_width, page_height = A4
+
 page_margin_top = 25 * mm
 page_margin_bottom = 20 * mm
 page_margin_left = 17 * mm  # to avoid punches
 page_margin_right = 10 * mm
 page_footer_text_y = 10 * mm
-frame_padding_top = 10 * mm
+
+frame_padding_top = 7 * mm
 frame_padding_left = 5 * mm
 frame_padding_right = 5 * mm
-frame_border = 0  # either 0 or 1
+frame_border = 1  # either 0 or 1
 
 
 # https://stackoverflow.com/a/59882495/2721597
@@ -69,21 +72,51 @@ class qr_code_doc_template(BaseDocTemplate):
         self.leftMargin = page_margin_left
         self.rightMargin = page_margin_right
 
+        self.prepare_page_templates()
+
+    def prepare_page_templates(self):
+        first_page_template = PageTemplate('FirstPage', Frame(self.leftMargin, self.bottomMargin, page_width - self.rightMargin, page_height - self.topMargin, id='FirstPageFrame'), onPage=self.draw_first_page)
+
         frame_width = (page_width - self.leftMargin - self.rightMargin) / 2
-        frame_height = (page_height - self.topMargin - self.bottomMargin) / 2
+        frame_height = (page_height - self.topMargin - self.bottomMargin) / 3
         frames = [
-            Frame(self.leftMargin,                  self.bottomMargin + frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,     id='F11', showBoundary=frame_border),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,    id='F12', showBoundary=frame_border),
-            Frame(self.leftMargin,                  self.bottomMargin,                  frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,    id='F21', showBoundary=frame_border),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin,                  frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,    id='F22', showBoundary=frame_border),
+            Frame(self.leftMargin,                  self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F11', showBoundary=frame_border),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F12', showBoundary=frame_border),
+            Frame(self.leftMargin,                  self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F21', showBoundary=frame_border),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F22', showBoundary=frame_border),
+            Frame(self.leftMargin,                  self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F31', showBoundary=frame_border),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F32', showBoundary=frame_border),
         ]
-        template = PageTemplate('normal', frames, onPage=self.draw_common_elements)
-        self.addPageTemplates(template)
+        content_page_template = PageTemplate('ContentPage', frames, onPage=self.draw_common_elements)
+        self.addPageTemplates([first_page_template, content_page_template])
+
+    def draw_first_page(self, canvas, doc):
+        test_string, test_qrcode = get_test_qrcode()
+
+        canvas.saveState()
+        canvas.setFont("Helvetica-Bold", 24)
+        canvas.drawCentredString(page_width / 2, page_height - 50 * mm, self.file_name)
+        canvas.setFont("Helvetica", 12)
+        canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.generation_timestamp}')
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')
+        canvas.drawString(self.leftMargin, self.bottomMargin + 2 * 5 * mm, 'the string below when scanning the QR code to the right.')
+        canvas.drawString(self.leftMargin, self.bottomMargin + 1 * 5 * mm, 'Pay special attention to X/Y and the symbols.')
+        canvas.drawString(self.leftMargin, self.bottomMargin + 0 * 5 * mm, test_string)
+        canvas.drawInlineImage(test_qrcode, x=125 * mm, y=self.bottomMargin - 1 * mm, width=19 * mm, height=19 * mm)
+        canvas.restoreState()
 
     def draw_common_elements(self, canvas, doc):
         canvas.saveState()
-        canvas.drawString(page_margin_left, page_height - 15 * mm, f'File Name: {self.file_name}')
-        canvas.drawString(page_margin_left, page_height - 20 * mm, f'SHA256: {self.file_sha256.lower()}')
+        canvas.setFont("Helvetica", 12)
+        canvas.drawString(page_margin_left, page_height - 15 * mm, 'File Name:')
+        canvas.setFont("Helvetica-Bold", 12)
+        canvas.drawString(page_margin_left + 25 * mm, page_height - 15 * mm, f'{self.file_name}')
+        canvas.setFont("Helvetica", 12)
+        canvas.drawString(page_margin_left, page_height - 20 * mm, 'SHA256:')
+        canvas.setFont("Helvetica", 10)
+        canvas.drawString(page_margin_left + 25 * mm, page_height - 20 * mm, f'{self.file_sha256.lower()}')
+        canvas.setFont("Helvetica", 12)
         canvas.drawString(page_margin_left, page_footer_text_y, self.generation_timestamp)
         canvas.restoreState()
 

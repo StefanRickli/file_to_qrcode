@@ -1,6 +1,9 @@
 import sys
 import os
-import glob, ntpath, posixpath
+import glob
+import ntpath
+import posixpath
+from pathlib import Path
 import math
 import base64
 import json
@@ -8,6 +11,7 @@ import hashlib
 import treepoem
 import logging
 import generate_pdf
+import uuid
 
 chunk_size = 400
 qr_code_eclevel = 'M'  # all options are [L, M, Q, H]
@@ -35,10 +39,11 @@ file_list = glob.glob('./encode/in/*.txt')
 newest_file = max(file_list, key=os.path.getmtime)
 print(f'Converting {newest_file} to QR codes')
 if os.name == 'nt':
-    newest_file_name = ntpath.basename(newest_file)
+    input_file_path = ntpath.basename(newest_file)
 else:
-    newest_file_name = posixpath.basename(newest_file)
-file_name_b64txt = base64.b32encode(newest_file_name.encode()).decode()
+    input_file_path = posixpath.basename(newest_file)
+input_file_name = Path(input_file_path).name
+input_file_name_b64txt = base64.b32encode(input_file_name.encode()).decode()
 
 try:
     f = open(newest_file, 'rb')
@@ -57,25 +62,31 @@ chunk_data_arr = [data_b64txt[i:i+chunk_size] for i in range(0, len(data_b64txt)
 chunks_total = len(chunk_data_arr)
 n_digits = math.ceil(math.log10(chunks_total))
 pad_fmt = f'0{n_digits}'
+batch_uuid = str(uuid.uuid4().hex).upper()
 files = []
 for i, chunk_data in enumerate(chunk_data_arr):
-    chunk = {
-        # 'file_name': f'{file_name_b64txt}',
-        # 'file_sha256': data_hash,
-        # 'chunk_idx': f'{i+1:{pad_fmt}}',
-        # 'chunk_total': f'{chunks_total:{pad_fmt}}',
-        # 'data': chunk_data
-        'FILE_NAME': f'{file_name_b64txt}',
-        'FILE_SHA256': data_hash,
-        'CHUNK_IDX': f'{i+1:{pad_fmt}}',
-        'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
-        'DATA': chunk_data
-    }
+    # Caps for all chars are needed to allow the QR code
+    # engine to choose alphanumeric mode.
+    if i == 0:
+        chunk = {
+            'FILE_NAME': input_file_name_b64txt,
+            'FILE_SHA256': data_hash,
+            'CHUNK_IDX': f'{i+1:{pad_fmt}}',
+            'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
+            'BATCH_UUID': batch_uuid,
+            'DATA': chunk_data
+        }
+    else:
+        chunk = {
+            'BATCH_UUID': batch_uuid,
+            'CHUNK_IDX': f'{i+1:{pad_fmt}}',
+            'DATA': chunk_data
+        }
 
     code_content = json.dumps(chunk)
 
     # Custom character mapping to QR code alphanumeric charset allows
-    # QR code generator to compress the data (see 'QR code mode')
+    # QR code generator to compress the data (see 'QR code mode').
     mapping = {'{': '$%%', '}': '%%$', '_': '-', '"': '*', '=': '.', ',': '$$%'}
     for k, v in mapping.items():
         code_content = code_content.replace(k, v)
@@ -83,17 +94,16 @@ for i, chunk_data in enumerate(chunk_data_arr):
     image = treepoem.generate_barcode('qrcode', code_content, {'eclevel': qr_code_eclevel})
 
     width, height = image.size
-    modules = (width - 2) / 4
-    version = ((modules - 21) / 4) + 1
-    logging.info(f'ECL: {qr_code_eclevel}, Length: {len(code_content)}, Modules: {modules}, Version: {version}')
+    modules = int((width - 2) / 4)
+    version = int(((modules - 21) / 4) + 1)
+    logging.info(f'Chunk {i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}, Content length: {len(code_content)}, EC Level: {qr_code_eclevel}, Modules: {modules} ==> Version: {version}')
 
-    out_filename = f'{out_folder}/{newest_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
-    print(out_filename)
-    image.save(out_filename)
+    out_file_path = f'{out_folder}/{input_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
+    image.save(out_file_path)
 
-    files.append({'file_name': newest_file_name, 'file_sha256': data_hash, 'chunk_img': out_filename, 'chunk_idx': i+1, 'chunk_total': chunks_total})
+    files.append({'file_name': input_file_name, 'file_sha256': data_hash, 'chunk_img': out_file_path, 'chunk_idx': i+1, 'chunk_total': chunks_total})
 
 print('Generating PDF...')
-pdf_file = f'{out_folder}/{newest_file_name}.pdf'
-generate_pdf.run(files, pdf_file)
+pdf_file_path = f'{out_folder}/{input_file_name}.pdf'
+generate_pdf.run(files, pdf_file_path)
 print('Done!')

@@ -3,25 +3,24 @@ import glob
 # import argparse
 # from qrtools import qrtools
 # from reportlab.pdfgen import canvas
-from reportlab.platypus import FrameBreak, Paragraph, Image, Spacer
+from reportlab.platypus import PageBreak, FrameBreak, Paragraph, Image, Spacer, NextPageTemplate
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 from reportlab_classes import qr_code_doc_template
 
 page_width, page_height = A4
-border_top = 20 * mm
-border_bottom = 20 * mm
-border_left = 15 * mm
-frame_padding_top = 10 * mm
-frame_padding_left = 10 * mm
 
 
 def run(files, out_file):
     story = []
 
+    # FirstPage Template is already active and will draw its stuff before the PageBreak
+    story.append(NextPageTemplate('ContentPage'))
+    story.append(PageBreak())
+
     for i, f in enumerate(files):
         story.append(Paragraph(f"Chunk {f['chunk_idx']} / {f['chunk_total']}"))
-        story.append(Spacer(width=0, height=7 * mm))
+        story.append(Spacer(width=0, height=5 * mm))
         img_dim = page_width/2 - 50 * mm
         story.append(Image(f['chunk_img'], width=img_dim, height=img_dim, hAlign='LEFT'))
         story.append(FrameBreak())
