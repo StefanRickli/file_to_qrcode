@@ -6,4 +6,8 @@ decode/out/*
 encode/in/*
 encode/out/*
 
+test/*
+
+*__pycache__*
+
 !*.gitkeep
