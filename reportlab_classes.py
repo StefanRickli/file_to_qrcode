@@ -59,10 +59,11 @@ class NumberedPageCanvas(Canvas):
 
 
 class qr_code_doc_template(BaseDocTemplate):
-    def __init__(self, out_file, file_name, file_sha256, frame_border=0, **kw):
+    def __init__(self, out_file, file_name, file_sha256, git_hash, frame_border=0, **kw):
         super().__init__(out_file, **kw)
         self.file_name = file_name
         self.file_sha256 = file_sha256
+        self.git_hash = git_hash
         self.generation_timestamp = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
 
         self.topMargin = page_margin_top
@@ -98,6 +99,7 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.drawCentredString(page_width / 2, page_height - 50 * mm, self.file_name)
         canvas.setFont("Helvetica", 12)
         canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.generation_timestamp}')
+        canvas.drawCentredString(page_width / 2, page_height - 65 * mm, f'Git Hash: {self.git_hash.lower()}')
         canvas.setFont("Helvetica", 10)
         canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')
         canvas.drawString(self.leftMargin, self.bottomMargin + 2 * 5 * mm, 'the string below when scanning the QR code to the right.')

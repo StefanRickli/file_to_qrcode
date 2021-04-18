@@ -12,6 +12,10 @@ import treepoem
 import logging
 import generate_pdf
 import uuid
+import subprocess
+
+process = subprocess.Popen(['git', 'rev-parse', 'HEAD'], shell=False, stdout=subprocess.PIPE)
+git_head_hash = process.communicate()[0].strip().decode()[0:7]
 
 chunk_size = 400
 qr_code_eclevel = 'M'  # all options are [L, M, Q, H]
@@ -74,6 +78,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
             'CHUNK_IDX': f'{i+1:{pad_fmt}}',
             'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
             'BATCH_UUID': batch_uuid,
+            'GIT_REV': git_head_hash.upper(),
             'DATA': chunk_data
         }
     else:
@@ -101,7 +106,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
     out_file_path = f'{out_folder}/{input_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
     image.save(out_file_path)
 
-    files.append({'file_name': input_file_name, 'file_sha256': data_hash, 'chunk_img': out_file_path, 'chunk_idx': i+1, 'chunk_total': chunks_total})
+    files.append({'file_name': input_file_name, 'file_sha256': data_hash, 'git_hash': git_head_hash, 'chunk_img': out_file_path, 'chunk_idx': i+1, 'chunk_total': chunks_total})
 
 print('Generating PDF...')
 pdf_file_path = f'{out_folder}/{input_file_name}.pdf'
