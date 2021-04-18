@@ -31,11 +31,15 @@ chunk_numbers = []
 
 code_contents = raw.splitlines()
 for i, code_content in enumerate(code_contents):
-    # print(code_content)
     try:
+        # First, revert custom character mapping (QR code optimization, see 'QR code mode')
+        mapping = {'$%%': '{', '%%$': '}', '-': '_', '*': '"', '.': '=', '$$%': ','}
+        for k, v in mapping.items():
+            code_content = code_content.replace(k, v)
+
         chunk = json.loads(code_content)
         if got_chunk:
-            if file_name != chunk['file_name']:
+            if file_name != base64.b64decode(chunk['file_name'].encode()).decode():
                 raise ValueError('File name mismatch')
             if file_hash != chunk['file_sha256']:
                 raise ValueError('File hash mismatch')
@@ -43,12 +47,12 @@ for i, code_content in enumerate(code_contents):
                 raise ValueError('Chunk total mismatch')
         else:
             got_chunk = True
-            print(f"Original file name: {chunk['file_name']}")
-            print(f"Original file hash (SHA256):  {chunk['file_sha256']}")
-            print(f"Total chunks to process: {chunk['chunks_total']}")
-            file_name = chunk['file_name']
+            file_name = base64.b64decode(chunk['file_name'].encode()).decode()
             file_hash = chunk['file_sha256']
             chunks_total = int(chunk['chunks_total'])
+            print(f"Original file name: {file_name}")
+            print(f"Original file hash (SHA256):  {file_hash}")
+            print(f"Total chunks to process: {chunks_total}")
         
         print(f"Found chunk #{chunk['chunk_idx']}")
 

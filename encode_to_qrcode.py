@@ -17,6 +17,7 @@ if os.name == 'nt':
     newest_file_name = ntpath.basename(newest_file)
 else:
     newest_file_name = posixpath.basename(newest_file)
+file_name_b64txt = base64.b64encode(newest_file_name.encode()).decode()
 
 try:
     f = open(newest_file, 'rb')
@@ -37,7 +38,7 @@ n_digits = math.ceil(chunks_total/10)
 pad_fmt = f'0{n_digits}'
 for i, chunk_data in enumerate(chunk_data_arr):
     chunk = {
-        'file_name': f'{newest_file_name}',
+        'file_name': f'{file_name_b64txt}',
         'file_sha256': data_hash,
         'chunk_idx': f'{i+1:{pad_fmt}}',
         'chunks_total': f'{chunks_total:{pad_fmt}}',
@@ -45,6 +46,12 @@ for i, chunk_data in enumerate(chunk_data_arr):
     }
 
     code_content = json.dumps(chunk)
+
+    # Custom character mapping to QR code alphanumeric charset allows
+    # QR code generator to compress the data (see 'QR code mode')
+    mapping = {'{': '$%%', '}': '%%$', '_': '-', '"': '*', '=': '.', ',': '$$%'}
+    for k, v in mapping.items():
+        code_content = code_content.replace(k, v)
 
     image = treepoem.generate_barcode('qrcode', code_content, {'eclevel': qr_code_eclevel})
     out_filename = f'./encode/out/{newest_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
