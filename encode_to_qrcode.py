@@ -72,6 +72,10 @@ files = []
 for i, chunk_data in enumerate(chunk_data_arr):
     # Caps for all chars are needed to allow the QR code
     # engine to choose alphanumeric mode.
+    #
+    # Refer to https://www.qrcode.com/en/about/version.html
+    # for an explanation of the capacity of a QR code with
+    # respect to ECL, mode and version.
     if i == 0:
         chunk = {
             'FILE_NAME': input_file_name_b64txt,
