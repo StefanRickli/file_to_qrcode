@@ -1,3 +1,12 @@
+# A word of caution
+This project is very active at the moment and the decoder currently is broken because a lot of changes in the content header happened.
+
+Todo:
+- Fix decoder
+- Rename folders
+- Make the program a CLI
+- Control app behavior using args
+
 ## encode_to_qrcode.py
 - In: A file needs to be present in the folder `encode/in/`. The algorigthm will choose the file with the latest date modified.
 - Out: A series of datamatrix PNG files `encode/out/*.png`, containing the text of the input file.
