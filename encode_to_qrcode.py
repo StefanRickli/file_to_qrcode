@@ -40,7 +40,7 @@ logging.basicConfig(
 )
 
 
-file_list = glob.glob('./encode/in/*.txt')
+file_list = glob.glob('./encode/in/*')
 newest_file = max(file_list, key=os.path.getmtime)
 print(f'Converting {newest_file} to QR codes')
 if os.name == 'nt':
@@ -116,4 +116,5 @@ for i, chunk_data in enumerate(chunk_data_arr):
 print('Generating PDF...')
 pdf_file_path = f'{out_folder}/{input_file_name}.pdf'
 generate_pdf.run(files, pdf_file_path)
+print(f'File written to "{pdf_file_path}".')
 print('Done!')

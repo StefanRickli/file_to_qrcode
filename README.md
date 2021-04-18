@@ -1,11 +1,5 @@
-
-# A word of caution
-**Line breaks and other special character in the original text will not be encoded in the QR codes!**
-
-Look for "QR code alphanumeric mode" for more details.
-
 ## encode_to_datamatrix.py
-- In: A file needs to be present in the current folder of the form `encode/*.txt`. The algorigthm will choose the file with the latest date modified.
+- In: A file needs to be present in the folder `encode/`. The algorigthm will choose the file with the latest date modified.
 - Out: A series of datamatrix PNG files `encode/out/*.png`, containing the text of the input file.
 
 ## decode_from_datamatrix
