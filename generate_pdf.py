@@ -11,7 +11,7 @@ from reportlab_classes import qr_code_doc_template
 page_width, page_height = A4
 
 
-def run(files, out_file):
+def run(files, out_file, frame_border=0):
     story = []
 
     # FirstPage Template is already active and will draw its stuff before the PageBreak
@@ -25,7 +25,7 @@ def run(files, out_file):
         story.append(Image(f['chunk_img'], width=img_dim, height=img_dim, hAlign='LEFT'))
         story.append(FrameBreak())
 
-    doc = qr_code_doc_template(out_file, files[0]['file_name'], files[0]['file_sha256'], pagesize=A4)
+    doc = qr_code_doc_template(out_file, files[0]['file_name'], files[0]['file_sha256'], frame_border=frame_border, pagesize=A4)
     doc.multiBuild(story)
 
 
@@ -39,5 +39,5 @@ if __name__ == '__main__':
         else:
             break
 
-    run(files, out_file)
+    run(files, out_file, frame_border=1)
     os.system("start " + os.path.abspath(out_file))

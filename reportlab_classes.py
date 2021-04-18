@@ -16,8 +16,6 @@ page_footer_text_y = 10 * mm
 frame_padding_top = 7 * mm
 frame_padding_left = 5 * mm
 frame_padding_right = 5 * mm
-frame_border = 1  # either 0 or 1
-
 
 # https://stackoverflow.com/a/59882495/2721597
 class NumberedPageCanvas(Canvas):
@@ -61,7 +59,7 @@ class NumberedPageCanvas(Canvas):
 
 
 class qr_code_doc_template(BaseDocTemplate):
-    def __init__(self, out_file, file_name, file_sha256, **kw):
+    def __init__(self, out_file, file_name, file_sha256, frame_border=0, **kw):
         super().__init__(out_file, **kw)
         self.file_name = file_name
         self.file_sha256 = file_sha256
@@ -72,6 +70,8 @@ class qr_code_doc_template(BaseDocTemplate):
         self.leftMargin = page_margin_left
         self.rightMargin = page_margin_right
 
+        self.frameBorder = frame_border
+
         self.prepare_page_templates()
 
     def prepare_page_templates(self):
@@ -80,12 +80,12 @@ class qr_code_doc_template(BaseDocTemplate):
         frame_width = (page_width - self.leftMargin - self.rightMargin) / 2
         frame_height = (page_height - self.topMargin - self.bottomMargin) / 3
         frames = [
-            Frame(self.leftMargin,                  self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F11', showBoundary=frame_border),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F12', showBoundary=frame_border),
-            Frame(self.leftMargin,                  self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F21', showBoundary=frame_border),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F22', showBoundary=frame_border),
-            Frame(self.leftMargin,                  self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F31', showBoundary=frame_border),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F32', showBoundary=frame_border),
+            Frame(self.leftMargin,                  self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F11', showBoundary=self.frameBorder),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F12', showBoundary=self.frameBorder),
+            Frame(self.leftMargin,                  self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F21', showBoundary=self.frameBorder),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F22', showBoundary=self.frameBorder),
+            Frame(self.leftMargin,                  self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F31', showBoundary=self.frameBorder),
+            Frame(self.leftMargin + frame_width,    self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F32', showBoundary=self.frameBorder),
         ]
         content_page_template = PageTemplate('ContentPage', frames, onPage=self.draw_common_elements)
         self.addPageTemplates([first_page_template, content_page_template])
