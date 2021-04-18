@@ -99,7 +99,7 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.drawCentredString(page_width / 2, page_height - 50 * mm, self.file_name)
         canvas.setFont("Helvetica", 12)
         canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.generation_timestamp}')
-        canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/text_to_qrcode')
+        canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/file_to_qrcode')
         canvas.drawCentredString(page_width / 2, page_height - 75 * mm, f'Git Hash: {self.git_hash.lower()}')
         canvas.setFont("Helvetica", 10)
         canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')
