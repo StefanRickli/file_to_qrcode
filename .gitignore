@@ -1,4 +1,6 @@
 
+.vscode/*
+
 decode/in/*
 decode/out/*
 encode/in/*
