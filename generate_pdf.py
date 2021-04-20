@@ -25,7 +25,7 @@ def run(files, out_file, frame_border=0):
         story.append(Image(f['chunk_img'], width=img_dim, height=img_dim, hAlign='LEFT'))
         story.append(FrameBreak())
 
-    doc = qr_code_doc_template(out_file, files[0]['file_name'], files[0]['file_sha256'], files[0]['git_hash'], frame_border=frame_border, pagesize=A4)
+    doc = qr_code_doc_template(out_file, files[0]['file_name'], files[0]['file_sha256'], files[0]['git_commit_unixtime'], frame_border=frame_border, pagesize=A4)
     doc.multiBuild(story)
 
 
