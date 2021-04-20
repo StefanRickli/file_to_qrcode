@@ -11,13 +11,13 @@ Todo:
 - Add source code of encoder (and decoder?) to the first PDF page
 - Use alternative way to refer to a unique commit on first page
 
-## encode_to_qrcode.py
-- In: A file needs to be present in the folder `encode/in/`. The algorigthm will choose the file with the latest date modified.
-- Out: A series of datamatrix PNG files `encode/out/*.png`, containing the text of the input file.
+## backup_to_qrcode.py
+- In: A file needs to be present in the folder `backup/in/`. The algorigthm will choose the file with the latest date modified.
+- Out: A series of QR code PNG files `backup/out/*.png`, containing the text of the input file.
 
-## decode_from_qrcode.py
-- In: A text file of the form `decode/in/*.txt`, containing the scanned (with help of a 2D barcode scanner) text of all datamatrix fields. The user need not take care of the order in which he scans the fields. Scanning a field twice also has no adverse affects.
-- Out: A file `decode/out/*` with the content of the original file.
+## restore_from_scan.py
+- In: A text file of the form `restore/in/*.txt`, containing the scanned (with help of a 2D barcode scanner) text of all QR codes. The user need not take care of the order in which he scans the fields. Scanning a field twice also has no adverse affects.
+- Out: A file in `restore/out/` with the content of the original file.
 
 ## Example output
 ### First page
