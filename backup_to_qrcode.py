@@ -60,8 +60,8 @@ git_commit_unixtime = code_revisioning.get_commit_timestamp()
 
 hash_object = hashlib.sha256(data)
 data_hash = hash_object.hexdigest().upper()
-data_b64txt = base64.b32encode(data).decode()
-chunk_data_arr = [data_b64txt[i:i+chunk_size] for i in range(0, len(data_b64txt), chunk_size)]
+data_b32txt = base64.b32encode(data).decode()
+chunk_data_arr = [data_b32txt[i:i+chunk_size] for i in range(0, len(data_b32txt), chunk_size)]
 
 chunks_total = len(chunk_data_arr)
 n_digits = math.ceil(math.log10(chunks_total))

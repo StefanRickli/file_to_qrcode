@@ -66,8 +66,8 @@ if not all(i in chunk_numbers for i in range(1, chunks_total+1)):
 
 keys = sorted(chunk_data_arr.keys())
 chunk_data_sorted = [chunk_data_arr[k] for k in keys]
-data_b64txt = ''.join(chunk_data_sorted)
-data = base64.b64decode(data_b64txt.encode())
+data_b32txt = ''.join(chunk_data_sorted)
+data = base64.b64decode(data_b32txt.encode())
 
 hash_object = hashlib.sha256(data)
 data_hash = hash_object.hexdigest()
