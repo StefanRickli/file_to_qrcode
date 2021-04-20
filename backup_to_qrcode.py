@@ -12,11 +12,8 @@ import treepoem
 import logging
 import generate_pdf
 import uuid
-import subprocess
+import code_revisioning
 
-# https://gist.github.com/ethanwhite/ba63849c26301f862e4e
-process = subprocess.Popen(['git', 'rev-parse', 'HEAD'], shell=False, stdout=subprocess.PIPE)
-git_head_hash = process.communicate()[0].strip().decode()[0:7]
 
 chunk_size = 400
 qr_code_eclevel = 'M'  # all options are [L, M, Q, H]
@@ -83,7 +80,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
             'CHUNK_IDX': f'{i+1:{pad_fmt}}',
             'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
             'BATCH_UUID': batch_uuid,
-            'GIT_REV': git_head_hash.upper(),
+            'GIT_COMMIT_UNIXTIME': code_revisioning.get_commit_timestamp().upper(),
             'DATA': chunk_data
         }
     else:
