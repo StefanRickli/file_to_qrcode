@@ -6,7 +6,7 @@ import glob
 from reportlab.platypus import PageBreak, FrameBreak, Paragraph, Image, Spacer, NextPageTemplate
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
-from reportlab_classes import qr_code_doc_template
+from assets.reportlab_classes import qr_code_doc_template
 
 page_width, page_height = A4
 

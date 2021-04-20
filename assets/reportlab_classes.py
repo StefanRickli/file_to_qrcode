@@ -17,6 +17,7 @@ frame_padding_top = 7 * mm
 frame_padding_left = 5 * mm
 frame_padding_right = 5 * mm
 
+
 # https://stackoverflow.com/a/59882495/2721597
 class NumberedPageCanvas(Canvas):
     """
