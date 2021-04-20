@@ -9,7 +9,6 @@ Todo:
 - Add different page layouts
 - Add restoration verification
 - Add source code of encoder (and decoder?) to the first PDF page
-- Use alternative way to refer to a unique commit on first page
 
 ## backup_to_qrcode.py
 - In: A file needs to be present in the folder `backup/in/`. The algorigthm will choose the file with the latest date modified.
