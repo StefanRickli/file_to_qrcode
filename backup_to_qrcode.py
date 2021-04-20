@@ -1,3 +1,4 @@
+# Standard library
 import sys
 import os
 import glob
@@ -8,10 +9,14 @@ import math
 import base64
 import json
 import hashlib
-import treepoem
 import logging
-import generate_pdf
 import uuid
+
+# Other modules
+import treepoem
+
+# Own modules
+import generate_pdf
 from assets import code_revisioning
 
 
