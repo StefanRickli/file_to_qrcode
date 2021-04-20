@@ -5,8 +5,8 @@ import json
 import base64
 import hashlib
 
-in_folder = './decode/in'
-out_folder = './decode/out'
+in_folder = './restore/in'
+out_folder = './restore/out'
 
 file_list = glob.glob(f'{in_folder}/*.txt')
 try:

@@ -20,7 +20,7 @@ git_head_hash = process.communicate()[0].strip().decode()[0:7]
 
 chunk_size = 400
 qr_code_eclevel = 'M'  # all options are [L, M, Q, H]
-out_folder = './encode/out'
+out_folder = './backup/out'
 
 experiment_number = 0
 while True:
@@ -40,7 +40,7 @@ logging.basicConfig(
 )
 
 
-file_list = glob.glob('./encode/in/*')
+file_list = glob.glob('./backup/in/*')
 newest_file = max(file_list, key=os.path.getmtime)
 print(f'Converting {newest_file} to QR codes')
 if os.name == 'nt':

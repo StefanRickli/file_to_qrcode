@@ -1,10 +1,10 @@
 
 .vscode/*
 
-decode/in/*
-decode/out/*
-encode/in/*
-encode/out/*
+backup/in/*
+backup/out/*
+restore/in/*
+restore/out/*
 
 test/*
 
