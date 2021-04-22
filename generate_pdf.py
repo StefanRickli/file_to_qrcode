@@ -1,8 +1,5 @@
 import os
 import glob
-# import argparse
-# from qrtools import qrtools
-# from reportlab.pdfgen import canvas
 from reportlab.platypus import PageBreak, FrameBreak, Paragraph, Image, Spacer, NextPageTemplate
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
