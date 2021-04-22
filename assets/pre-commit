@@ -10,14 +10,14 @@ set -e
 
 out_file='./assets/code_revisioning.py'
 
-now_hash=$(date +%s)
+now_timestamp=$(date +'%Y-%m-%d %H:%M:%S')
 
 cat << EOF > ./assets/code_revisioning.py
 # DO NOT MODIFY
 # This file is generated automatically by the Git pre-commit hook.
 
-def get_commit_timestamp():
-    return '$now_hash'
+def get_software_timestamp():
+    return '$now_timestamp'
 EOF
 
 git add $out_file

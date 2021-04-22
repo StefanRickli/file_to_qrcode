@@ -61,7 +61,7 @@ except Exception as e:
 data = f.read()
 f.close()
 
-git_commit_unixtime = code_revisioning.get_commit_timestamp()
+software_timestamp = code_revisioning.get_software_timestamp()
 
 hash_object = hashlib.sha256(data)
 data_hash = hash_object.hexdigest().upper()
@@ -87,7 +87,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
             'CHUNK_IDX': f'{i+1:{pad_fmt}}',
             'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
             'BATCH_UUID': batch_uuid,
-            'GIT_COMMIT_UNIXTIME': git_commit_unixtime.upper(),
+            'SOFTWARE_TIMESTAMP': software_timestamp.upper(),
             'DATA': chunk_data
         }
     else:
@@ -115,7 +115,13 @@ for i, chunk_data in enumerate(chunk_data_arr):
     out_file_path = f'{out_folder}/{input_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
     image.save(out_file_path)
 
-    files.append({'file_name': input_file_name, 'file_sha256': data_hash, 'git_commit_unixtime': git_commit_unixtime, 'chunk_img': out_file_path, 'chunk_idx': i+1, 'chunk_total': chunks_total})
+    files.append({'file_name': input_file_name,
+                  'file_sha256': data_hash,
+                  'software_timestamp': software_timestamp,
+                  'chunk_img': out_file_path,
+                  'chunk_idx': i+1,
+                  'chunk_total': chunks_total
+                  })
 
 print('Generating PDF...')
 pdf_file_path = f'{out_folder}/{input_file_name}.pdf'
