@@ -3,7 +3,6 @@ This project is very active at the moment and the decoder currently is broken be
 
 Todo:
 - Fix decoder
-- Rename folders
 - Make the program a CLI
 - Control app behavior using args
 - Add different page layouts
