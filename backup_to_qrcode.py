@@ -66,7 +66,7 @@ software_timestamp = code_revisioning.get_software_timestamp()
 hash_object = hashlib.sha256(data)
 data_hash = hash_object.hexdigest().upper()
 data_b32txt = base64.b32encode(data).decode()
-chunk_data_arr = [data_b32txt[i:i+chunk_size] for i in range(0, len(data_b32txt), chunk_size)]
+chunk_data_arr = [data_b32txt[i:i + chunk_size] for i in range(0, len(data_b32txt), chunk_size)]
 
 chunks_total = len(chunk_data_arr)
 n_digits = math.ceil(math.log10(chunks_total))
@@ -110,7 +110,11 @@ for i, chunk_data in enumerate(chunk_data_arr):
     width, height = image.size
     modules = int((width - 2) / 4)
     version = int(((modules - 21) / 4) + 1)
-    logging.info(f'Chunk {i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}, Content length: {len(code_content)}, EC Level: {qr_code_eclevel}, Modules: {modules} ==> Version: {version}')
+    logging.info(f'Chunk {i+1:{pad_fmt}} of {chunks_total:{pad_fmt}},'
+                 f'Content length: {len(code_content)},'
+                 f'EC Level: {qr_code_eclevel},'
+                 f'Modules: {modules}'
+                 f' ==> Version: {version}')
 
     out_file_path = f'{out_folder}/{input_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
     image.save(out_file_path)
@@ -119,7 +123,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
                   'file_sha256': data_hash,
                   'software_timestamp': software_timestamp,
                   'chunk_img': out_file_path,
-                  'chunk_idx': i+1,
+                  'chunk_idx': i + 1,
                   'chunk_total': chunks_total
                   })
 

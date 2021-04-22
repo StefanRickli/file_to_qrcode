@@ -21,7 +21,7 @@ def run(files, out_file, frame_border=0):
     for i, f in enumerate(files):
         story.append(Paragraph(f"Chunk {f['chunk_idx']} / {f['chunk_total']}"))
         story.append(Spacer(width=0, height=5 * mm))
-        img_dim = page_width/2 - 50 * mm
+        img_dim = (page_width / 2) - 50 * mm
         story.append(Image(f['chunk_img'], width=img_dim, height=img_dim, hAlign='LEFT'))
         story.append(FrameBreak())
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
               'file_sha256': 'D3F3C5CD377CA1690D1D99352C7AEEC7551B00CFDEDFC42F43E43D9EFAE6E816',
               'software_timestamp': '2021-04-22 18:30:01',
               'chunk_img': p,
-              'chunk_idx': i+1,
+              'chunk_idx': i + 1,
               'chunk_total': 27} for i, p in enumerate(glob.glob('./backup/out/*.png'))]  # fix name, index one-indexing
     experiment_number = 0
     while True:

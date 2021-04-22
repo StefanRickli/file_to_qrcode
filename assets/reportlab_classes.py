@@ -77,17 +77,21 @@ class qr_code_doc_template(BaseDocTemplate):
         self.prepare_page_templates()
 
     def prepare_page_templates(self):
-        first_page_template = PageTemplate('FirstPage', Frame(self.leftMargin, self.bottomMargin, page_width - self.rightMargin, page_height - self.topMargin, id='FirstPageFrame'), onPage=self.draw_first_page)
+        first_page_template = PageTemplate('FirstPage', Frame(self.leftMargin,
+                                                              self.bottomMargin,
+                                                              page_width - self.rightMargin,
+                                                              page_height - self.topMargin,
+                                                              id='FirstPageFrame'), onPage=self.draw_first_page)
 
         frame_width = (page_width - self.leftMargin - self.rightMargin) / 2
         frame_height = (page_height - self.topMargin - self.bottomMargin) / 3
         frames = [
-            Frame(self.leftMargin,                  self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F11', showBoundary=self.frameBorder),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F12', showBoundary=self.frameBorder),
-            Frame(self.leftMargin,                  self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F21', showBoundary=self.frameBorder),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F22', showBoundary=self.frameBorder),
-            Frame(self.leftMargin,                  self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F31', showBoundary=self.frameBorder),
-            Frame(self.leftMargin + frame_width,    self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F32', showBoundary=self.frameBorder),
+            Frame(self.leftMargin,                  self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F11', showBoundary=self.frameBorder),  # noqa: E241,E501
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + 2 * frame_height,   frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F12', showBoundary=self.frameBorder),  # noqa: E241,E501
+            Frame(self.leftMargin,                  self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F21', showBoundary=self.frameBorder),  # noqa: E241,E501
+            Frame(self.leftMargin + frame_width,    self.bottomMargin + frame_height,       frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F22', showBoundary=self.frameBorder),  # noqa: E241,E501
+            Frame(self.leftMargin,                  self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F31', showBoundary=self.frameBorder),  # noqa: E241,E501
+            Frame(self.leftMargin + frame_width,    self.bottomMargin,                      frame_width,   frame_height,    topPadding=frame_padding_top,   leftPadding=frame_padding_left, rightPadding=frame_padding_right,   id='F32', showBoundary=self.frameBorder),  # noqa: E241,E501
         ]
         content_page_template = PageTemplate('ContentPage', frames, onPage=self.draw_common_elements)
         self.addPageTemplates([first_page_template, content_page_template])
@@ -100,12 +104,12 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.drawCentredString(page_width / 2, page_height - 50 * mm, self.file_name)
         canvas.setFont("Helvetica", 12)
         canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.generation_timestamp}')
-        canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/file_to_qrcode')
-        canvas.drawCentredString(page_width / 2, page_height - 75 * mm, f'Software Timestamp: {self.software_timestamp}')
+        canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/file_to_qrcode')    # noqa: E241,E501
+        canvas.drawCentredString(page_width / 2, page_height - 75 * mm, f'Software Timestamp: {self.software_timestamp}')                 # noqa: E241,E501
         canvas.setFont("Helvetica", 10)
-        canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')
-        canvas.drawString(self.leftMargin, self.bottomMargin + 2 * 5 * mm, 'the string below when scanning the QR code to the right.')
-        canvas.drawString(self.leftMargin, self.bottomMargin + 1 * 5 * mm, 'Pay special attention to X/Y and the symbols.')
+        canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')  # noqa: E241,E501
+        canvas.drawString(self.leftMargin, self.bottomMargin + 2 * 5 * mm, 'the string below when scanning the QR code to the right.')    # noqa: E241,E501
+        canvas.drawString(self.leftMargin, self.bottomMargin + 1 * 5 * mm, 'Pay special attention to X/Y and the symbols.')               # noqa: E241,E501
         canvas.drawString(self.leftMargin, self.bottomMargin + 0 * 5 * mm, test_string)
         canvas.drawInlineImage(test_qrcode, x=125 * mm, y=self.bottomMargin - 1 * mm, width=19 * mm, height=19 * mm)
         canvas.restoreState()

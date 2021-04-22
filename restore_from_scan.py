@@ -1,4 +1,4 @@
-import sys, traceback
+import sys
 import os
 import glob
 import json
@@ -16,11 +16,8 @@ except ValueError:
     sys.exit(1)
 print(f'Stitching together "{newest_file}"')
 
-try:
-    f = open(newest_file, 'r')
-except Exception as e:
-    traceback.print_exc()
-    sys.exit(1)
+# No error handling at the moment since we want to quit if for any reason we can't read the file
+f = open(newest_file, 'r')
 
 raw = f.read()
 f.close()
@@ -30,6 +27,9 @@ chunk_data_arr = {}
 chunk_numbers = []
 
 code_contents = raw.splitlines()
+file_name = ''
+file_hash = ''
+chunks_total = 0
 for i, code_content in enumerate(code_contents):
     try:
         # First, revert custom character mapping (QR code optimization, see 'QR code mode')
@@ -53,15 +53,15 @@ for i, code_content in enumerate(code_contents):
             print(f"Original file name: {file_name}")
             print(f"Original file hash (SHA256):  {file_hash}")
             print(f"Total chunks to process: {chunks_total}")
-        
+
         print(f"Found chunk #{chunk['chunk_idx']}")
 
         chunk_data_arr[f"{chunk['file_name']}_{chunk['chunk_idx']}"] = chunk['data']
         chunk_numbers.append(int(chunk['chunk_idx']))
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         pass
 
-if not all(i in chunk_numbers for i in range(1, chunks_total+1)):
+if not all(i in chunk_numbers for i in range(1, chunks_total + 1)):
     raise ValueError('Missing at least one chunk')
 
 keys = sorted(chunk_data_arr.keys())
