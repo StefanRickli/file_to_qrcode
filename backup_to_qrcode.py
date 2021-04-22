@@ -64,7 +64,7 @@ f.close()
 software_timestamp = code_revisioning.get_software_timestamp()
 
 hash_object = hashlib.sha256(data)
-data_hash = hash_object.hexdigest().upper()
+data_sha256 = hash_object.hexdigest().upper()
 data_b32txt = base64.b32encode(data).decode()
 chunk_data_arr = [data_b32txt[i:i + chunk_size] for i in range(0, len(data_b32txt), chunk_size)]
 
@@ -72,7 +72,7 @@ chunks_total = len(chunk_data_arr)
 n_digits = math.ceil(math.log10(chunks_total))
 pad_fmt = f'0{n_digits}'
 batch_uuid = str(uuid.uuid4().hex).upper()
-files = []
+image_files = []
 for i, chunk_data in enumerate(chunk_data_arr):
     # Caps for all chars are needed to allow the QR code
     # engine to choose alphanumeric mode.
@@ -83,7 +83,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
     if i == 0:
         chunk = {
             'FILE_NAME': input_file_name_b64txt,
-            'FILE_SHA256': data_hash,
+            'FILE_SHA256': data_sha256,
             'CHUNK_IDX': f'{i+1:{pad_fmt}}',
             'CHUNKS_TOTAL': f'{chunks_total:{pad_fmt}}',
             'BATCH_UUID': batch_uuid,
@@ -119,16 +119,19 @@ for i, chunk_data in enumerate(chunk_data_arr):
     out_file_path = f'{out_folder}/{input_file_name} ({i+1:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
     image.save(out_file_path)
 
-    files.append({'file_name': input_file_name,
-                  'file_sha256': data_hash,
-                  'software_timestamp': software_timestamp,
-                  'chunk_img': out_file_path,
-                  'chunk_idx': i + 1,
-                  'chunk_total': chunks_total
-                  })
+    image_files.append({'chunk_idx': i + 1,
+                        'chunk_total': chunks_total,
+                        'chunk_img_path': out_file_path
+                        })
+
+
+file_metadata = {'file_name': input_file_name,
+                 'file_sha256': data_sha256,
+                 'software_timestamp': software_timestamp}
 
 print('Generating PDF...')
+in_data = {'meta': file_metadata, 'image_files': image_files}
 pdf_file_path = f'{out_folder}/{input_file_name}.pdf'
-generate_pdf.run(files, pdf_file_path)
+generate_pdf.run(in_data, pdf_file_path)
 print(f'File written to "{pdf_file_path}".')
 print('Done!')

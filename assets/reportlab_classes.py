@@ -60,11 +60,11 @@ class NumberedPageCanvas(Canvas):
 
 
 class qr_code_doc_template(BaseDocTemplate):
-    def __init__(self, out_file, file_name, file_sha256, software_timestamp, frame_border=0, **kw):
-        super().__init__(out_file, **kw)
-        self.file_name = file_name
-        self.file_sha256 = file_sha256
-        self.software_timestamp = software_timestamp
+    def __init__(self, in_metadata, out_file_path, frame_border=0, **kw):
+        super().__init__(out_file_path, **kw)
+        self.file_name = in_metadata['file_name']
+        self.file_sha256 = in_metadata['file_sha256']
+        self.software_timestamp = in_metadata['software_timestamp']
         self.generation_timestamp = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
 
         self.topMargin = page_margin_top
