@@ -90,9 +90,9 @@ def write_qr_code(chunk_idx, chunk_content, out_file_path):
     width, height = image.size
     modules = int((width - 2) / 4)
     version = int(((modules - 21) / 4) + 1)
-    logging.info(f"Chunk {chunk_idx:{pad_fmt}} of {chunks_total:{pad_fmt}},"
-                 f'Content length: {len(qr_code_content)},'
-                 f'EC Level: {qr_code_eclevel},'
+    logging.info(f"Chunk {chunk_idx:{pad_fmt}} of {chunks_total:{pad_fmt}}, "
+                 f'Content length: {len(qr_code_content)}, '
+                 f'EC Level: {qr_code_eclevel}, '
                  f'Modules: {modules}'
                  f' ==> Version: {version}')
 
