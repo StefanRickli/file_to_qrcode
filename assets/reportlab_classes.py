@@ -1,4 +1,3 @@
-from datetime import datetime
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame
@@ -62,10 +61,10 @@ class NumberedPageCanvas(Canvas):
 class qr_code_doc_template(BaseDocTemplate):
     def __init__(self, in_metadata, out_file_path, frame_border=0, **kw):
         super().__init__(out_file_path, **kw)
+        self.software_timestamp = in_metadata['software_timestamp']
         self.file_name = in_metadata['file_name']
         self.file_sha256 = in_metadata['file_sha256']
-        self.software_timestamp = in_metadata['software_timestamp']
-        self.generation_timestamp = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
+        self.batch_timestamp = in_metadata['batch_timestamp']
 
         self.topMargin = page_margin_top
         self.bottomMargin = page_margin_bottom
@@ -103,7 +102,7 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.setFont("Helvetica-Bold", 24)
         canvas.drawCentredString(page_width / 2, page_height - 50 * mm, self.file_name)
         canvas.setFont("Helvetica", 12)
-        canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.generation_timestamp}')
+        canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.batch_timestamp}')
         canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/file_to_qrcode')    # noqa: E241,E501
         canvas.drawCentredString(page_width / 2, page_height - 75 * mm, f'Software Timestamp: {self.software_timestamp}')                 # noqa: E241,E501
         canvas.setFont("Helvetica", 10)
@@ -125,7 +124,7 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.setFont("Helvetica", 10)
         canvas.drawString(page_margin_left + 25 * mm, page_height - 20 * mm, f'{self.file_sha256.lower()}')
         canvas.setFont("Helvetica", 12)
-        canvas.drawString(page_margin_left, page_footer_text_y, self.generation_timestamp)
+        canvas.drawString(page_margin_left, page_footer_text_y, self.batch_timestamp)
         canvas.restoreState()
 
     def build(self, flowables, filename=None, canvasmaker=NumberedPageCanvas):
