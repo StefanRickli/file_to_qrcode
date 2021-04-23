@@ -36,7 +36,7 @@ if __name__ == '__main__':
                      'software_timestamp': '2021-04-22 18:30:01'}
     image_files = [{'chunk_idx': i + 1,
                     'chunk_total': 27,
-                    'chunk_img_path': p} for i, p in enumerate(glob.glob('./backup/out/*.png'))]  # fix name, index one-indexing
+                    'chunk_img_path': p} for i, p in enumerate(glob.glob('./backup/out/*.png'))]
     in_data = {'meta': file_metadata, 'image_files': image_files}
 
     experiment_number = 0
