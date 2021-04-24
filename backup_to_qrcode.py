@@ -55,7 +55,7 @@ parser.add_argument('--chunk_size', type=int, default=400,
 parser.add_argument('--qr_code_eclevel', type=str, default='M',
                     help='Determines the error correction level of the QR code. '
                          'Valid arguments are "L", "M", "Q", "H"')
-parser.add_argument('--preserve_tempfiles', type=bool, default=False,
+parser.add_argument('--preserve_tempfiles', action='store_true',
                     help='If destination is a PDF file, this flag will prevent the image files to be deleted')
 
 args = parser.parse_args()
