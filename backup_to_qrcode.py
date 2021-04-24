@@ -17,14 +17,10 @@ import treepoem
 import generate_pdf
 from assets import code_revisioning
 
-# TODO put into argparse
-chunk_size = 400
-qr_code_eclevel = 'M'  # all options are [L, M, Q, H]
-
 
 # -----------------------------------------------------------------------------------
 
-def write_qr_code(chunk_idx, chunk_content, out_file_path):
+def write_qr_code(chunk_idx, chunk_content, out_file_path, qr_code_eclevel):
     qr_code_content = json.dumps(chunk_content)
 
     # Since JSON contains characters that are not in the QR code alphanumeric
@@ -53,17 +49,28 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--source', type=str, required=True)
 parser.add_argument('-d', '--destination', type=str, required=True)
 parser.add_argument('-l', '--logfile', type=str)
-parser.add_argument('--preserve_tempfiles', type=bool, default=False)
+parser.add_argument('--chunk_size', type=int, default=400,
+                    help='Sets the size of the data chunks in # of characters. '
+                         'Note that this does not inlcude the chunk header.')
+parser.add_argument('--qr_code_eclevel', type=str, default='M',
+                    help='Determines the error correction level of the QR code. '
+                         'Valid arguments are "L", "M", "Q", "H"')
+parser.add_argument('--preserve_tempfiles', type=bool, default=False,
+                    help='If destination is a PDF file, this flag will prevent the image files to be deleted')
 
 args = parser.parse_args()
+
+if not os.path.isfile(args.source):
+    raise ValueError(f'Source file does not exist: "{args.source}"')
 
 in_file_path = args.source
 in_file_basename = os.path.basename(in_file_path)
 
 dest_path = args.destination
 if os.path.basename(dest_path):
-    if os.path.splitext(args.destination)[1].lower() != '.pdf':
-        raise ValueError('Unknown destination file extension. Need ".pdf" or ".PDF".')
+    out_file_extension = os.path.splitext(args.destination)[1]
+    if out_file_extension != '.pdf':
+        raise ValueError(f'Unknown destination file extension: "{out_file_extension}". Need ".pdf" or ".PDF".')
     run_pdf_generation = True
     out_file_path = dest_path
     out_file_basename = os.path.basename(dest_path)
@@ -76,6 +83,10 @@ else:
 
 if args.logfile is None:
     log_file_path = f'{os.path.join(out_folder, out_file_basename)}.log'
+else:
+    if not os.path.basename(args.logfile):
+        raise ValueError(f'Logfile path is not target to a file: "{args.logfile}"')
+    log_file_path = args.logfile
 
 logging.basicConfig(
     level=logging.INFO,
@@ -85,6 +96,9 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+
+if args.qr_code_eclevel not in ['L', 'M', 'Q', 'H']:
+    raise ValueError(f'Unexpected value for "qr_code_eclevel": {args.qr_code_eclevel}')
 
 logging.info(f'Converting "{in_file_path}" to "{out_file_path}"')
 
@@ -112,7 +126,7 @@ in_file_basename_b64txt = base64.b32encode(in_file_basename.encode()).decode()
 
 data_sha256 = hashlib.sha256(data).hexdigest().upper()
 data_b32txt = base64.b32encode(data).decode()
-chunk_data_arr = [data_b32txt[i:i + chunk_size] for i in range(0, len(data_b32txt), chunk_size)]
+chunk_data_arr = [data_b32txt[i:i + args.chunk_size] for i in range(0, len(data_b32txt), args.chunk_size)]
 
 chunks_total = len(chunk_data_arr) + 1  # +1 for the metadata chunk
 n_digits = math.ceil(math.log10(chunks_total))
@@ -148,7 +162,7 @@ batch_metadata_qr = {'SOFTWARE_TIMESTAMP': software_timestamp,
                      }
 
 img_file_path = f'{out_folder}/{in_file_basename} ({1:{pad_fmt}} Metadata).png'
-write_qr_code(1, batch_metadata_qr, img_file_path)
+write_qr_code(1, batch_metadata_qr, img_file_path, args.qr_code_eclevel)
 
 image_files = []
 image_files.append({'chunk_idx': '1', 'chunk_img_path': img_file_path})
@@ -166,7 +180,7 @@ for i, chunk_data in enumerate(chunk_data_arr):
     }
 
     img_file_path = f'{out_folder}/{out_file_basename} ({i:{pad_fmt}} of {chunks_total:{pad_fmt}}).png'
-    write_qr_code(i, chunk_content, img_file_path)
+    write_qr_code(i, chunk_content, img_file_path, args.qr_code_eclevel)
 
     image_files.append({'chunk_idx': i,
                         'chunk_img_path': img_file_path
@@ -178,5 +192,9 @@ if run_pdf_generation:
     logging.info('Generating PDF...')
     in_data = {'meta': batch_metadata, 'image_files': image_files}
     generate_pdf.run(in_data, out_file_path)
-    logging.info(f'File written to "{out_file_path}".')
+    logging.info(f'PDF file written to "{out_file_path}".')
     logging.info('Done!')
+
+if not args.preserve_tempfiles:
+    for image_file in image_files:
+        os.remove(image_file['chunk_img_path'])
