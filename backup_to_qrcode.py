@@ -29,16 +29,19 @@ def write_qr_code(chunk_idx, chunk_content, out_file_path, qr_code_eclevel):
     for k, v in charset_mapping.items():
         qr_code_content = qr_code_content.replace(k, v)
 
+    if args.verbose:
+        verbose_logger.info(qr_code_content)
+
     image = treepoem.generate_barcode('qrcode', qr_code_content, {'eclevel': qr_code_eclevel})
 
     width, height = image.size
     modules = int((width - 2) / 4)
     version = int(((modules - 21) / 4) + 1)
-    logging.info(f"Chunk {chunk_idx:{pad_fmt}} of {chunks_total:{pad_fmt}}, "
-                 f'Content length: {len(qr_code_content)}, '
-                 f'EC Level: {qr_code_eclevel}, '
-                 f'Modules: {modules}'
-                 f' ==> Version: {version}')
+    logger.info(f"Chunk {chunk_idx:{pad_fmt}} of {chunks_total:{pad_fmt}}, "
+                f'Content length: {len(qr_code_content)}, '
+                f'EC Level: {qr_code_eclevel}, '
+                f'Modules: {modules}'
+                f' ==> Version: {version}')
 
     image.save(out_file_path)
 
@@ -60,6 +63,8 @@ parser.add_argument('--qr_code_eclevel', type=str, default='M',
 parser.add_argument('--preserve_tempfiles', action='store_true',
                     help='If destination is a PDF file, this flag will prevent '
                     'the temporary image files to be deleted.')
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help='Generate text file containing QR code contents.')
 
 args = parser.parse_args()
 
@@ -91,19 +96,33 @@ else:
         raise ValueError(f'Logfile path is not target to a file: "{args.logfile}"')
     log_file_path = args.logfile
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-    handlers=[
-        logging.FileHandler(log_file_path),
-        logging.StreamHandler()
-    ]
-)
+formatter = logging.Formatter('%(message)s')
+logger = logging.getLogger('Regular logger')
+logger.setLevel(logging.DEBUG)
+
+file_handler = logging.FileHandler(log_file_path)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+console_handler = logging.StreamHandler(stream=sys.stdout)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
 
 if args.qr_code_eclevel not in ['L', 'M', 'Q', 'H']:
     raise ValueError(f'Unexpected value for "qr_code_eclevel": {args.qr_code_eclevel}')
 
-logging.info(f'Converting "{in_file_path}" to "{out_file_path}"')
+if args.verbose:
+    verbose_formatter = logging.Formatter('%(message)s')
+    verbose_logger = logging.getLogger('Verbose Logger')
+    verbose_logger.setLevel(logging.DEBUG)
+
+    verbose_file_path = f'{os.path.join(out_folder, out_file_basename)}_qr_contents.txt'
+    verbose_handler = logging.FileHandler(verbose_file_path)
+    verbose_handler.setFormatter(verbose_formatter)
+    verbose_logger.addHandler(verbose_handler)
+
+logger.info(f'Converting "{in_file_path}" to "{out_file_path}"')
 
 # -----------------------------------------------------------------------------------
 
@@ -116,7 +135,7 @@ try:
     data = f.read()
     f.close()
 except Exception as e:
-    logging.info(e)
+    logger.info(e)
     sys.exit(1)
 
 # ######################
@@ -192,11 +211,11 @@ for i, chunk_data in enumerate(chunk_data_arr):
 # -----------------------------------------------------------------------------------
 
 if run_pdf_generation:
-    logging.info('Generating PDF...')
+    logger.info('Generating PDF...')
     in_data = {'meta': batch_metadata, 'image_files': image_files}
     generate_pdf.run(in_data, out_file_path)
-    logging.info(f'PDF file written to "{out_file_path}".')
-    logging.info('Done!')
+    logger.info(f'PDF file written to "{out_file_path}".')
+    logger.info('Done!')
 
 if not args.preserve_tempfiles:
     for image_file in image_files:
