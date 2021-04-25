@@ -27,8 +27,16 @@ optional arguments:
   ```
 
 ## restore_from_scan.py
-- In: A text file of the form `restore/in/*.txt`, containing the scanned (with help of a 2D barcode scanner) text of all QR codes. The user need not take care of the order in which he scans the fields. Scanning a field twice also has no adverse affects.
-- Out: A file in `restore/out/` with the content of the original file.
+```
+usage: restore_from_scan.py [-h] -s SOURCE [-d DESTINATION] [-l LOGFILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SOURCE, --source SOURCE
+  -d DESTINATION, --destination DESTINATION
+                        Can be either a file or folder.
+  -l LOGFILE, --logfile LOGFILE
+```
 
 ## Example output
 ### First page
