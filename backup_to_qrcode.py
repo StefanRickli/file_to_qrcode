@@ -72,6 +72,7 @@ if not os.path.isfile(args.source):
     raise ValueError(f'Source file does not exist: "{args.source}"')
 
 in_file_path = args.source
+in_file_name = os.path.split(in_file_path)[1]
 in_file_basename = os.path.basename(in_file_path)
 
 dest_path = args.destination
@@ -144,7 +145,7 @@ except Exception as e:
 
 software_timestamp = code_revisioning.get_software_timestamp()
 
-in_file_basename_b64txt = base64.b32encode(in_file_basename.encode()).decode()
+in_file_name_b64txt = base64.b32encode(in_file_name.encode()).decode()
 
 data_sha256 = hashlib.sha256(data).hexdigest().upper()
 data_b32txt = base64.b32encode(data).decode()
@@ -161,7 +162,7 @@ batch_uuid = uuid.uuid4().hex.upper()
 # ################
 
 batch_metadata = {'software_timestamp': software_timestamp,
-                  'file_name': in_file_basename,
+                  'file_name': in_file_name,
                   'file_sha256': data_sha256,
                   'batch_timestamp': batch_timestamp,
                   'batch_id': batch_uuid,
@@ -175,7 +176,7 @@ batch_metadata = {'software_timestamp': software_timestamp,
 # for an explanation of the capacity of a QR code with
 # respect to ECL, mode and version.
 batch_metadata_qr = {'SOFTWARE_TIMESTAMP': software_timestamp,
-                     'FILE_NAME': in_file_basename_b64txt,
+                     'FILE_NAME': in_file_name_b64txt,
                      'FILE_SHA256': data_sha256,
                      'BATCH_TIMESTAMP': batch_timestamp,
                      'BATCH_ID': batch_uuid,
