@@ -47,16 +47,19 @@ def write_qr_code(chunk_idx, chunk_content, out_file_path, qr_code_eclevel):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--source', type=str, required=True)
-parser.add_argument('-d', '--destination', type=str, required=True)
+parser.add_argument('-d', '--destination', type=str, required=True,
+                    help='Can be either a PDF file or a folder. '
+                    'In case of folder, only QR code PNG files are created.')
 parser.add_argument('-l', '--logfile', type=str)
 parser.add_argument('--chunk_size', type=int, default=400,
                     help='Sets the size of the data chunks in # of characters. '
                          'Note that this does not inlcude the chunk header.')
 parser.add_argument('--qr_code_eclevel', type=str, default='M',
                     help='Determines the error correction level of the QR code. '
-                         'Valid arguments are "L", "M", "Q", "H"')
+                         'Valid arguments are "L", "M", "Q", "H".')
 parser.add_argument('--preserve_tempfiles', action='store_true',
-                    help='If destination is a PDF file, this flag will prevent the image files to be deleted')
+                    help='If destination is a PDF file, this flag will prevent '
+                    'the temporary image files to be deleted.')
 
 args = parser.parse_args()
 

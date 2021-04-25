@@ -17,12 +17,13 @@ optional arguments:
   -h, --help            show this help message and exit
   -s SOURCE, --source SOURCE
   -d DESTINATION, --destination DESTINATION
+                        Can be either a PDF file or a folder. In case of folder, only QR code PNG files are created.
   -l LOGFILE, --logfile LOGFILE
   --chunk_size CHUNK_SIZE
                         Sets the size of the data chunks in # of characters. Note that this does not inlcude the chunk header.
   --qr_code_eclevel QR_CODE_ECLEVEL
-                        Determines the error correction level of the QR code. Valid arguments are "L", "M", "Q", "H"
-  --preserve_tempfiles  If destination is a PDF file, this flag will prevent the image files to be deleted
+                        Determines the error correction level of the QR code. Valid arguments are "L", "M", "Q", "H".
+  --preserve_tempfiles  If destination is a PDF file, this flag will prevent the temporary image files to be deleted.
   ```
 
 ## restore_from_scan.py
