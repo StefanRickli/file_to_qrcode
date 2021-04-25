@@ -10,8 +10,20 @@ Todo:
 - Add source code of encoder (and decoder?) to the first PDF page
 
 ## backup_to_qrcode.py
-- In: A file needs to be present in the folder `backup/in/`. The algorigthm will choose the file with the latest date modified.
-- Out: A series of QR code PNG files `backup/out/*.png`, containing the text of the input file.
+```
+usage: backup_to_qrcode.py [-h] -s SOURCE -d DESTINATION [-l LOGFILE] [--chunk_size CHUNK_SIZE] [--qr_code_eclevel QR_CODE_ECLEVEL] [--preserve_tempfiles]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SOURCE, --source SOURCE
+  -d DESTINATION, --destination DESTINATION
+  -l LOGFILE, --logfile LOGFILE
+  --chunk_size CHUNK_SIZE
+                        Sets the size of the data chunks in # of characters. Note that this does not inlcude the chunk header.
+  --qr_code_eclevel QR_CODE_ECLEVEL
+                        Determines the error correction level of the QR code. Valid arguments are "L", "M", "Q", "H"
+  --preserve_tempfiles  If destination is a PDF file, this flag will prevent the image files to be deleted
+  ```
 
 ## restore_from_scan.py
 - In: A text file of the form `restore/in/*.txt`, containing the scanned (with help of a 2D barcode scanner) text of all QR codes. The user need not take care of the order in which he scans the fields. Scanning a field twice also has no adverse affects.
