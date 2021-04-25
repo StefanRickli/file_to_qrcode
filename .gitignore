@@ -11,3 +11,7 @@ test/*
 *__pycache__*
 
 !*.gitkeep
+
+# Temporarily
+assets/restore_from_scan*
+assets/backup_to_qrcode*
