@@ -122,7 +122,7 @@ if args.verbose:
     verbose_handler.setFormatter(verbose_formatter)
     verbose_logger.addHandler(verbose_handler)
 
-logger.info(f'Converting "{in_file_path}" to "{out_file_path}"')
+logger.info(f'Converting "{in_file_path}" to "{out_folder}"')
 
 # -----------------------------------------------------------------------------------
 
