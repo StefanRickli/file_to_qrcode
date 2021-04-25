@@ -2,12 +2,10 @@
 This project is very active at the moment and the decoder currently is broken because a lot of changes in the content header happened.
 
 Todo:
-- Fix decoder
-- Make the program a CLI
-- Control app behavior using args
 - Add different page layouts
 - Add restoration verification
-- Add source code of encoder (and decoder?) to the first PDF page
+- Add source code of decoder (and encoder?) to the first PDF page
+- Refactor code such that backup and restore can be tested by testsuite
 
 ## backup_to_qrcode.py
 ```
