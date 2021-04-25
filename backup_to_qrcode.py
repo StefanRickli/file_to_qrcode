@@ -151,7 +151,7 @@ data_b32txt = base64.b32encode(data).decode()
 chunk_data_arr = [data_b32txt[i:i + args.chunk_size] for i in range(0, len(data_b32txt), args.chunk_size)]
 
 chunks_total = len(chunk_data_arr) + 1  # +1 for the metadata chunk
-n_digits = math.ceil(math.log10(chunks_total))
+n_digits = math.floor(math.log10(chunks_total)) + 1
 pad_fmt = f'0{n_digits}'
 batch_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 batch_uuid = uuid.uuid4().hex.upper()
