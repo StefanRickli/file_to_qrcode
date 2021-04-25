@@ -101,14 +101,13 @@ formatter = logging.Formatter('%(message)s')
 logger = logging.getLogger('Regular logger')
 logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler(log_file_path)
+file_handler = logging.FileHandler(log_file_path, mode='w')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 console_handler = logging.StreamHandler(stream=sys.stdout)
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
-
 
 if args.qr_code_eclevel not in ['L', 'M', 'Q', 'H']:
     raise ValueError(f'Unexpected value for "qr_code_eclevel": {args.qr_code_eclevel}')
@@ -119,7 +118,7 @@ if args.verbose:
     verbose_logger.setLevel(logging.DEBUG)
 
     verbose_file_path = f'{os.path.join(out_folder, out_file_basename)}_qr_contents.txt'
-    verbose_handler = logging.FileHandler(verbose_file_path)
+    verbose_handler = logging.FileHandler(verbose_file_path, mode='w')
     verbose_handler.setFormatter(verbose_formatter)
     verbose_logger.addHandler(verbose_handler)
 
