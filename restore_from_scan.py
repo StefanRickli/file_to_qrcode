@@ -9,7 +9,9 @@ import logging
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--source', type=str, required=True)
 parser.add_argument('-d', '--destination', type=str,
-                    help='Can be either a file or folder.')
+                    help='Optional: Defaults to the source folder and the original file name.'
+                         'If a folder is specified, the output file path is "dest_folder/original_filename".'
+                         'If a file is specified, the output file path is forced to that value.')
 parser.add_argument('-l', '--logfile', type=str)
 args = parser.parse_args()
 
@@ -21,24 +23,24 @@ in_file_name = os.path.split(in_file_path)[1]
 in_file_basename = os.path.basename(in_file_path)
 in_folder = os.path.dirname(in_file_path)
 
+out_file_path = None
+out_file_basename = None
+
 if args.destination is None:
     out_folder = in_folder
-    out_file_basename = in_file_basename
 else:
     dest_path = args.destination
     if os.path.basename(dest_path):
         # File given
+        out_folder = os.path.dirname(dest_path)
         out_file_path = dest_path
         out_file_basename = os.path.basename(dest_path)
-        out_folder = os.path.dirname(dest_path)
     else:
         # Folder given
-        out_file_path = os.path.join(out_folder, in_file_name)
-        out_file_basename = in_file_basename
         out_folder = dest_path
 
 if args.logfile is None:
-    log_file_path = f'{os.path.join(out_folder, out_file_basename)}.log'
+    log_file_path = f'{os.path.join(in_folder, in_file_basename)}.log'
 else:
     if not os.path.basename(args.logfile):
         raise ValueError(f'Logfile path is not target to a file: "{args.logfile}"')
@@ -128,9 +130,11 @@ if data_hash != orig_file_sha256:
     raise ValueError('Decoded data hash does not match with original hash')
 logger.info('Hashes match.')
 
-out_file = os.path.join(out_folder, orig_file_name)
-f = open(f'{out_file}', 'wb')
+if out_file_path is None:
+    out_file_path = os.path.join(out_folder, orig_file_name)
+
+f = open(f'{out_file_path}', 'wb')
 f.write(data)
 f.close()
 
-logger.info(f'Restored file to "{out_file}"')
+logger.info(f'Restored file to "{out_file_path}"')
