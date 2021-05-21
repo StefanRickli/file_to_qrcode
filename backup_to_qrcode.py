@@ -50,9 +50,9 @@ def write_qr_code(chunk_idx, chunk_content, out_file_path, qr_code_eclevel):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--source', type=str, required=True)
-parser.add_argument('-d', '--destination', type=str, required=True,
+parser.add_argument('-d', '--destination', type=str,
                     help='Can be either a PDF file or a folder. '
-                    'In case of folder, only QR code PNG files are created.')
+                    'In case of folder, the output file name is the input file name plus a .pdf extension.')
 parser.add_argument('-l', '--logfile', type=str)
 parser.add_argument('--chunk_size', type=int, default=400,
                     help='Sets the size of the data chunks in # of characters. '
@@ -60,9 +60,10 @@ parser.add_argument('--chunk_size', type=int, default=400,
 parser.add_argument('--qr_code_eclevel', type=str, default='M',
                     help='Determines the error correction level of the QR code. '
                          'Valid arguments are "L", "M", "Q", "H".')
+parser.add_argument('--skip_pdf_generation', action='store_true',
+                    help='If set, the program will end after creating the QR code image files.')
 parser.add_argument('--preserve_tempfiles', action='store_true',
-                    help='If destination is a PDF file, this flag will prevent '
-                    'the temporary image files to be deleted.')
+                    help='If set and a pdf file is generated, the QR code image files are not deleted.')
 parser.add_argument('-v', '--verbose', action='store_true',
                     help='Generate text file containing QR code contents.')
 
@@ -72,20 +73,24 @@ if not os.path.isfile(args.source):
     raise ValueError(f'Source file does not exist: "{args.source}"')
 
 in_file_path = args.source
+in_file_folder = os.path.dirname(in_file_path)
 in_file_basename = os.path.basename(in_file_path)
 
+if args.destination is None:
+    args.destination = in_file_path + '.pdf'
+
 dest_path = args.destination
+
 if os.path.basename(dest_path):
     out_file_extension = os.path.splitext(args.destination)[1]
     if out_file_extension != '.pdf':
         raise ValueError(f'Unknown destination file extension: "{out_file_extension}". Need ".pdf" or ".PDF".')
-    run_pdf_generation = True
     out_file_path = dest_path
     out_file_basename = os.path.basename(dest_path)
     out_folder = os.path.dirname(dest_path)
 else:
-    run_pdf_generation = False
-    out_file_path = dest_path
+    # Folder was specified
+    out_file_path = os.path.join(dest_path, in_file_basename) + '.pdf'
     out_file_basename = in_file_basename
     out_folder = dest_path
 
@@ -111,6 +116,10 @@ logger.addHandler(console_handler)
 if args.qr_code_eclevel not in ['L', 'M', 'Q', 'H']:
     raise ValueError(f'Unexpected value for "qr_code_eclevel": {args.qr_code_eclevel}')
 
+run_pdf_generation = not args.skip_pdf_generation
+
+preserve_tempfiles = args.preserve_tempfiles
+
 if args.verbose:
     verbose_formatter = logging.Formatter('%(message)s')
     verbose_logger = logging.getLogger('Verbose Logger')
@@ -121,7 +130,7 @@ if args.verbose:
     verbose_handler.setFormatter(verbose_formatter)
     verbose_logger.addHandler(verbose_handler)
 
-logger.info(f'Converting "{in_file_path}" to "{out_folder}"')
+logger.info(f'Converting "{in_file_path}" to "{out_file_path}"')
 
 # -----------------------------------------------------------------------------------
 
@@ -216,6 +225,6 @@ if run_pdf_generation:
     logger.info(f'PDF file written to "{out_file_path}".')
     logger.info('Done!')
 
-if not args.preserve_tempfiles:
-    for image_file in image_files:
-        os.remove(image_file['chunk_img_path'])
+    if not preserve_tempfiles:
+        for image_file in image_files:
+            os.remove(image_file['chunk_img_path'])
