@@ -1,5 +1,7 @@
 # A word of caution
-This project is very active at the moment and the decoder currently is broken because a lot of changes in the content header happened.
+This project is not actively maintained and the decoder currently is broken because a lot of changes in the content header happened.
+
+Nevertheless, I hope you find it a good source of inspiration, and if you come up with a sensible addition, feel free to make a pull request.
 
 Todo:
 - Add different page layouts
