@@ -105,6 +105,12 @@ class qr_code_doc_template(BaseDocTemplate):
         canvas.drawCentredString(page_width / 2, page_height - 60 * mm, f'Generated: {self.batch_timestamp}')
         canvas.drawCentredString(page_width / 2, page_height - 70 * mm, 'Source Code: https://github.com/StefanRickli/file_to_qrcode')    # noqa: E241,E501
         canvas.drawCentredString(page_width / 2, page_height - 75 * mm, f'Software Timestamp: {self.software_timestamp}')                 # noqa: E241,E501
+        canvas.setFont("Helvetica-Bold", 12)
+        canvas.drawCentredString(page_width / 2, page_height - 90 * mm, f'Reconstruction process:')                                       # noqa: E241,E501
+        canvas.setFont("Helvetica", 12)
+        canvas.drawCentredString(page_width / 2, page_height - 95 * mm, f'1. Create empty text file')                                     # noqa: E241,E501
+        canvas.drawCentredString(page_width / 2, page_height - 100 * mm, f'2. QR-Scan every chunk into one line in that file')                # noqa: E241,E501
+        canvas.drawCentredString(page_width / 2, page_height - 105 * mm, f'3. Feed that file to restore_from_scan')                        # noqa: E241,E501
         canvas.setFont("Helvetica", 10)
         canvas.drawString(self.leftMargin, self.bottomMargin + 3 * 5 * mm, 'Please make sure that your 2D scanner correctly reproduces')  # noqa: E241,E501
         canvas.drawString(self.leftMargin, self.bottomMargin + 2 * 5 * mm, 'the string below when scanning the QR code to the right.')    # noqa: E241,E501
