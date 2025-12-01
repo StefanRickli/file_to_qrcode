@@ -9,6 +9,7 @@ restore/out/*
 test/*
 
 *__pycache__*
+venv/*
 
 !*.gitkeep
 

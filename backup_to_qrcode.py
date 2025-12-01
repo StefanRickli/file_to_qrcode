@@ -79,7 +79,10 @@ in_file_basename = os.path.basename(in_file_path)
 if args.destination is None:
     args.destination = in_file_path + '.pdf'
 
-dest_path = args.destination
+if os.path.dirname(args.destination) != '':
+    dest_path = args.destination
+else:
+    dest_path = './' + args.destination
 
 if os.path.basename(dest_path):
     out_file_extension = os.path.splitext(args.destination)[1]

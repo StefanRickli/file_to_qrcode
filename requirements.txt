@@ -1,0 +1,4 @@
+chardet==5.2.0
+pillow==11.1.0
+reportlab==4.3.1
+treepoem==3.26.0
